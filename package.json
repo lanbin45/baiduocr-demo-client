@@ -16,8 +16,13 @@
   "dependencies": {
     "axios": "^0.18.0",
     "element-ui": "^2.4.4",
+    "mint-ui": "^2.2.13",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-bus": "^1.1.0",
+    "vue-json-excel": "^0.2.5",
+    "vue-json-to-excel": "^0.0.8",
+    "vue-router": "^3.0.1",
+    "xlsx": "^0.13.3"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

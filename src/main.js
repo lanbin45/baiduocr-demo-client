@@ -6,8 +6,16 @@ import router from './router'
 import axios from 'axios'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import Mint from 'mint-ui'
+import 'mint-ui/lib/style.css'
+import VueBus from 'vue-bus'
+// import JsonExcel from 'json-to-excel'
 
 Vue.use(ElementUI)
+Vue.use(Mint)
+Vue.use(VueBus)
+
+// Vue.component('downloadExcel', JsonExcel)
 
 Vue.config.productionTip = false
 Vue.prototype.axios = axios

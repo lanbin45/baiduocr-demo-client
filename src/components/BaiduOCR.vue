@@ -1,9 +1,9 @@
 <template>
 
 <el-card class="box-card">
-	<div slot="header" class="clearfix">
-		<span class="card-title">图片文字识别Demo</span>
-	</div>
+  <div slot="header" class="clearfix">
+    <span class="card-title">图片文字识别Demo</span>
+  </div>
   <div style="margin-bottom:50px">
     <el-steps :active="activeStep" align-center>
       <el-step title="步骤 1" description="先选择一张图片" icon="el-icon-upload"></el-step>
@@ -68,6 +68,7 @@
 </template>
 <script>
 import result from './Result'
+// import { OcrType, PicOptions } from '../constants/constant'
 const qs = require('qs')
 const { PicOptions } = require('../constants/constant')
 export default {
@@ -133,12 +134,18 @@ export default {
         picType: this.selectedCommand
       })
       this.words_result = []
+      var picType = this.selectedCommand
       this.axios.post('./api/baidu_ocr_general', params).then(res => {
         console.log(res)
         this.words_result = JSON.parse(res.data).words_result
-        console.log(this.words_result)
+        if (picType === 'form_ocr_request') {
+          let requestId = JSON.parse(res.data).result[0].request_id
+          setTimeout(this.requestFormFile(requestId), 10000)
+        }
         this.finishState = true
-      })
+      })/* .catch(error => {
+        this.$message.error('出错了，请刷新重试吧！！！')
+      }) */
     },
     restart () {
       this.activeStep = 1
@@ -146,6 +153,29 @@ export default {
       this.selectedCommand = ''
       this.selectedFileUrl = ''
       this.finishState = false
+    },
+    requestFormFile (requestId) {
+      this.axios.post('./api/baidu_ocr_general', qs.stringify(
+        {
+          picType: 'form_ocr_get_request_result',
+          requestId: /* '11518496_401810' */requestId
+        }
+      )).then(res => {
+        var url = JSON.parse(res.data).result.result_data
+        console.log(url)
+        if (url === '') {
+          this.requestFormFile(requestId)
+        } else {
+          let urlArrays = url.split('?')[0].split('/')
+          let fileName = urlArrays[urlArrays.length - 1]
+          const a = document.createElement('a')
+          a.setAttribute('href', url)
+          a.setAttribute('download', fileName)
+          a.click()
+        }
+      })/* .catch(error => {
+        this.$message.error('出错了，请刷新重试吧！！！')
+      }) */
     }
   }
 }
