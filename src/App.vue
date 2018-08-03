@@ -74,6 +74,9 @@ html,body {
 .white {
   color: white;
 }
+.green {
+  color: #0094b8;
+}
 .mint-header {
   background: #0094b8 !important;
 }
@@ -95,5 +98,29 @@ html,body {
 }
 .el-message-box {
   width: unset !important;
+}
+/* 设置滚动条的样式 */
+::-webkit-scrollbar {
+width:12px;
+}
+/* 滚动槽 */
+::-webkit-scrollbar-track {
+-webkit-box-shadow:inset006pxrgba(0,0,0,0.3);
+border-radius:10px;
+}
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+border-radius:10px;
+background:rgba(0,0,0,0.1);
+-webkit-box-shadow:inset006pxrgba(0,0,0,0.5);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+background:rgba(255,0,0,0.4);
+}
+.ocr-container {
+  /* position: fixed;
+  background-color: #0094b8; */
+  height: 95%;
+  width: 100%;
 }
 </style>

@@ -3,7 +3,7 @@
   <img v-if="!ocrState" v-for="(file, index) in fileUrls" v-bind:key="file" :src="file" :alt="fileNames[index]" class="image-cell">
   <el-button v-if="!ocrState" type="primary" plain style="width:80%" @click="getOcr">图片解析</el-button>
   <div v-if="ocrState" class="content">
-    <p class="white">已成功识别:<br />
+    <p class="green">已成功识别:<br />
     <strong v-for="filename in fileNames" v-bind:key="filename">{{filename}}<br /></strong>
     </p>
     <div style="width:100%; margin-top: 50px;">
@@ -80,7 +80,7 @@ export default {
       this.axios.post('./api/baidu_ocr_general', params).then(res => {
         console.log(res)
         var result = JSON.parse(res.data)
-        if (result.words_result_num === 0) {
+        if (result.words_result_num === 0 || result.error_code) {
           this.failedCount += 1
           return res
         }

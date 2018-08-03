@@ -1,9 +1,14 @@
 <template>
 <div class="ocr-container">
-  <img v-if="!ocrState" :src="fileUrl" class="image-container">
-  <el-button v-if="!ocrState" type="primary" plain style="width:80%" @click="getOcr">图片解析</el-button>
+  <div class="wrap" v-if="!ocrState">
+    <img :src="fileUrl" class="image-container">
+  </div>
+  <div v-if="!ocrState" class="footer-button">
+    <el-button type="primary" plain @click="getOcr">图片解析</el-button>
+    <el-button type="primary" plain @click="editPic">图片编辑</el-button>
+  </div>
   <div v-if="ocrState" class="content">
-    <p class="white">已成功识别:<br />
+    <p class="green">已成功识别:<br />
     <strong>{{fileName}}</strong>
     </p>
     <div style="width:100%; margin-top: 50px;">
@@ -52,7 +57,13 @@ export default {
         text: '操作中，请稍后'
       })
       this.axios.post('./api/baidu_ocr_general', params).then(res => {
-        this.requestId = JSON.parse(res.data).result[0].request_id
+        let resData = JSON.parse(res.data)
+        if (resData.error_code) {
+          this.$message.error(resData.error_msg)
+          this.loadingObj.close()
+          return
+        }
+        this.requestId = resData.result[0].request_id
         this.loadingObj.close()
         this.ocrState = true
       })
@@ -71,17 +82,26 @@ export default {
         }
       )).then(res => {
         try {
-          var url = JSON.parse(res.data).result.result_data
-          console.log(url)
-          if (url === '') {
-            this.requestFormFile()
-          } else {
+          let resData = JSON.parse(res.data)
+          if (resData.error_code) {
+            this.$message.error(resData.error_msg)
+            if (resData.error_msg === 'Open api request limit reached') {
+              this.requestFormFile(type)
+            }
             this.loadingObj.close()
-            // this.excelUrl = url
-            if (type === 'web') {
-              this.processWeb(url)
+          } else {
+            var url = resData.result.result_data
+            console.log(url)
+            if (url === '') {
+              this.requestFormFile(type)
             } else {
-              this.sendEmail(url)
+              this.loadingObj.close()
+              // this.excelUrl = url
+              if (type === 'web') {
+                this.processWeb(url)
+              } else {
+                this.sendEmail(url)
+              }
             }
           }
         } catch (error) {
@@ -125,14 +145,52 @@ export default {
           message: '取消输入'
         })
       })
+    },
+    editPic () {
+      var $this = this
+      let image = new Image()
+      image.onload = function () {
+        $this.imgWidth = image.width
+        $this.imgHeight = image.height
+        $this.$router.push({
+          path: 'draw',
+          query: {
+            fileUrl: $this.fileUrl,
+            imgWidth: image.width,
+            imgHeight: image.height,
+            fileName: $this.fileName
+          }
+        })
+      }
+      image.src = this.fileUrl
     }
   }
 }
 </script>
 
 <style>
-.image-container {
+/* .image-container {
   width:100%;
-  height: 90%;
+  height: 100%;
+} */
+.wrap {
+  overflow: auto !important;
+  margin-top: 50px;
+  border: 1px #585858 solid;
+  padding: 10px;
+  padding-right: 20px;
+  margin-bottom: 50px;
+}
+.footer-button {
+  position:fixed;
+  bottom:0;
+  left: 0;
+  right:0;
+  z-index: 1;
+  width:100%;
+  height:50px;
+  background-color: #0094b8;
+  text-align: center;
+  vertical-align: middle;
 }
 </style>

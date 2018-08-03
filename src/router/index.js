@@ -7,6 +7,7 @@ import FormOcr from '@/components/FormOcr'
 import CardOcr from '@/components/CardOcr'
 import UploadForm from '@/components/UploadForm'
 import UploadCard from '@/components/UploadCard'
+import Draw from '@/components/Draw'
 
 Vue.use(Router)
 
@@ -42,6 +43,10 @@ export default new Router({
       name: 'UploadCard',
       props: true,
       component: UploadCard
+    }, {
+      path: '/draw',
+      name: 'Draw',
+      component: Draw
     }
   ]
 })

@@ -16,8 +16,8 @@
     </el-upload>
     <div style="text-align: center; width: 100%">
     <div class="left-align-class">
-      <p class="font-14px-bold white">列表图片识别：<br /></p>
-      <p class="font-14px white">
+      <p class="font-14px-bold green">列表图片识别：<br /></p>
+      <p class="font-14px green">
         <ol>
           <li>图片大小不超过<strong>4M</strong></li>
           <li>最短边边长<strong>至少15px</strong>,最长边<strong>不超过4096px</strong></li>
@@ -63,6 +63,7 @@ export default {
       })
     },
     changeUpload (file, fileList) {
+      console.log(file)
       this.fileList = fileList
     },
     exceedFile (file) {
@@ -81,12 +82,6 @@ export default {
   top: 80px;
   text-align: center;
   vertical-align: middle;
-  width: 100%;
-}
-.ocr-container {
-  position: fixed;
-  background-color: #0094b8;
-  height: 100%;
   width: 100%;
 }
 .column-cell {
