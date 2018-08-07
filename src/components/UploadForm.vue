@@ -84,11 +84,13 @@ export default {
         try {
           let resData = JSON.parse(res.data)
           if (resData.error_code) {
-            this.$message.error(resData.error_msg)
-            if (resData.error_msg === 'Open api request limit reached') {
-              this.requestFormFile(type)
+            if (Number(resData.error_code) === 18) {
+              console.log('setTimeout--in')
+              setTimeout(this.requestFormFile(type), 1000)
+            } else {
+              this.$message.error(resData.error_msg)
+              this.loadingObj.close()
             }
-            this.loadingObj.close()
           } else {
             var url = resData.result.result_data
             console.log(url)

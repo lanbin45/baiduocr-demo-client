@@ -53,14 +53,31 @@ export default {
     },
     uploadSuccess (response, file, fileList) {
       console.log(file)
-      this.$router.push({
-        path: 'uploadform',
-        query: {
-          fileUrl: file.url,
-          imageUrl: response.path,
-          fileName: file.name
-        }
-      })
+      var $this = this
+      let image = new Image()
+      image.onload = function () {
+        $this.imgWidth = image.width
+        $this.imgHeight = image.height
+        $this.$router.push({
+          path: 'draw',
+          query: {
+            fileUrl: file.url,
+            imgWidth: image.width,
+            imgHeight: image.height,
+            fileName: file.name,
+            imageUrl: response.path
+          }
+        })
+      }
+      image.src = file.url
+      // this.$router.push({
+      //   path: 'uploadform',
+      //   query: {
+      //     fileUrl: file.url,
+      //     imageUrl: response.path,
+      //     fileName: file.name
+      //   }
+      // })
     },
     changeUpload (file, fileList) {
       console.log(file)

@@ -1,7 +1,7 @@
 <template>
   <div class="ocr-container">
     <div class="wrap">
-      <div class="canvas-container">
+      <div class="canvas-container wrapContainer">
         <canvas
           ref="myCanvas"
           id="canvas"
@@ -47,24 +47,40 @@ export default {
       fileUrl: this.$route.query.fileUrl,
       imgWidth: this.$route.query.imgWidth,
       imgHeight: this.$route.query.imgHeight,
+      imageUrl: this.$route.query.imageUrl,
       requestId: '',
       fileName: this.$route.query.fileName,
       isVertical: false
     }
   },
   mounted () {
-    const canvas = this.$refs.myCanvas
-    console.log(this.fileUrl)
-    var context = canvas.getContext('2d')
-    var img = new Image()
-    var $this = this
-    img.onload = function () {
-      context.drawImage(img, 0, 0)
-      $this.initDraw()
-      $this.setCanvasStyle()
-    }
-    img.src = this.fileUrl
-    this.context = context
+    this.$confirm('给表格图片添加适当的表格线将会极大地提高识别精度！快去试试吧', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '跳过',
+      type: 'warning'
+    }).then(() => {
+      const canvas = this.$refs.myCanvas
+      console.log(this.fileUrl)
+      var context = canvas.getContext('2d')
+      var img = new Image()
+      var $this = this
+      img.onload = function () {
+        context.drawImage(img, 0, 0)
+        $this.initDraw()
+        $this.setCanvasStyle()
+      }
+      img.src = this.fileUrl
+      this.context = context
+    }).catch(() => {
+      this.$router.push({
+        path: 'uploadform',
+        query: {
+          fileUrl: this.fileUrl,
+          imageUrl: this.imageUrl,
+          fileName: this.fileName
+        }
+      })
+    })
   },
   methods: {
     canvasState () {
@@ -97,16 +113,17 @@ export default {
     canvasUp (e) {
       console.log('canvasUp')
       if (this.canvasMoveUse) {
-        const t = e.target
-        let canvasX
-        let canvasY
-        if (this.isPc()) {
-          canvasX = e.clientX - t.parentNode.offsetLeft + t.parentNode.parentNode.scrollLeft
-          canvasY = e.clientY - t.parentNode.offsetTop + t.parentNode.parentNode.scrollTop
-        } else {
-          canvasX = e.changedTouches[0].clientX - t.parentNode.offsetLeft + t.parentNode.parentNode.scrollLeft
-          canvasY = e.changedTouches[0].clientY - t.parentNode.offsetTop + t.parentNode.parentNode.scrollTop
-        }
+        let canvasX = e.offsetX
+        let canvasY = e.offsetY
+        // if (this.isPc()) {
+        //   // canvasX = e.clientX - t.parentNode.offsetLeft + t.parentNode.parentNode.scrollLeft
+        //   // canvasY = e.clientY - t.parentNode.offsetTop + t.parentNode.parentNode.scrollTop
+        //   canvasX = e.offsetX
+        //   canvasY = e.offsetY
+        // } else {
+        //   canvasX = e.changedTouches[0].offsetX
+        //   canvasY = e.changedTouches[0].offsetY
+        // }
         this.context.beginPath()
         this.context.moveTo(canvasX, canvasY)
         if (this.isVertical) {
@@ -147,7 +164,6 @@ export default {
         })
         var params = new FormData()
         params.append('file', file)
-        console.log(file)
         $this.axios.post('./api/upload', params, {
           headers: {
             'content-type': 'multipart/form-data; boundary=----WebKitFormBoundary3q4SNbnLAUih9eBx'
@@ -185,12 +201,14 @@ export default {
 </script>
 
 <style>
-/* .wrap {
+.wrap {
   overflow: auto !important;
   margin-top: 50px;
   border: 1px #585858 solid;
-  padding: 5px;
-} */
+  padding: 10px;
+  padding-right: 20px;
+  margin-bottom: 50px;
+}
 #canvas {
   border-right: 1px #585858 solid;
   cursor: crosshair;
