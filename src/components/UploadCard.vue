@@ -67,6 +67,7 @@ export default {
         text: '操作中，请稍后'
       })
       this.failedCount = 0
+      this.ocrResult = []
       this.imageUrls.every((val, index) => {
         this.requestOcrData(val)
         return true
